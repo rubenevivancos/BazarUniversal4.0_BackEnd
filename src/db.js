@@ -1,27 +1,65 @@
 require('dotenv').config();
-const { Sequelize } = require('sequelize');
-const { CA_CERTIFICATE, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = process.env;
-const pg = require('pg'); //ES OBLIGATORIO PARA VERCEL
+const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
-// Configuración para Sequelize para utilizar el cliente de PostgreSQL de pg: VERCEL NECESITA USAR PG
-pg.defaults.ssl = {
-    require: true,
-    rejectUnauthorized: false, //En true verifica que el certificado sea valido, en produccion debe ser true
-    ca: CA_CERTIFICATE
+// Configuración de variables de entorno
+const {
+  MONGO_USER,
+  MONGO_PASSWORD,
+  MONGO_HOST,
+  MONGO_PORT,
+  MONGO_DB_NAME
+} = process.env;
+
+// URL de conexión a MongoDB
+const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
+
+// Opciones de configuración de conexión
+const mongooseOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
 };
 
+// Conexión a MongoDB
+mongoose.connect(mongoUrl, mongooseOptions)
+  .then(() => console.log('Conexión exitosa a MongoDB'))
+  .catch(err => console.error('Error al conectar a MongoDB:', err));
 
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`, {
-  dialect: 'postgres', // Especifica que estamos utilizando PostgreSQL
-  dialectModule: pg, // Utiliza el cliente de PostgreSQL de pg: VERCEL NECESITA USAR PG
-  logging: false, // set to console.log to see the raw SQL queries
-  native: false, // lets Sequelize know we can use pg-native for ~30% more speed
-  define: {
-    freezeTableName: true //El valor true hace que el nombre del modelo sea igual al de la tabla
-  }
+// Definición de esquemas y modelos
+const modelDefiners = [];
+
+// Leer y cargar todos los archivos de modelos desde la carpeta 'Models'
+fs.readdirSync(path.join(__dirname, 'Models'))
+  .filter(file => file.endsWith('.js'))
+  .forEach(file => {
+    const modelDefiner = require(path.join(__dirname, 'Models', file));
+    modelDefiners.push(modelDefiner);
+  });
+
+// Inyectar la conexión de mongoose a todos los modelos
+modelDefiners.forEach(modelDefiner => modelDefiner(mongoose));
+
+// Capitalizar nombres de modelos (opcional)
+const capitalizedModels = modelDefiners.map(modelDefiner => {
+  const modelName = modelDefiner.modelName.charAt(0).toUpperCase() + modelDefiner.modelName.slice(1);
+  return [modelName, mongoose.model(modelDefiner.modelName)];
 });
 
+// Crear objetos con los modelos capitalizados
+const models = Object.fromEntries(capitalizedModels);
 
+// Definir relaciones entre modelos (ejemplo hipotético)
+// Aquí debes definir las relaciones según la lógica de tu aplicación y el esquema de tu base de datos MongoDB
+
+// Ejemplo de relaciones hipotéticas entre modelos
+// models.Product.hasMany(models.Image);
+// models.Product.belongsTo(models.Category);
+
+// Exportar modelos y la conexión de mongoose
 module.exports = {
-  conn: sequelize     // para importar la conexión { conn } = require('./db.js');
+  ...models,
+  mongooseConnection: mongoose.connection
 };
