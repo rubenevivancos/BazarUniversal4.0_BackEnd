@@ -51,12 +51,6 @@ const capitalizedModels = modelDefiners.map(modelDefiner => {
 // Crear objetos con los modelos capitalizados
 const models = Object.fromEntries(capitalizedModels);
 
-// Definir relaciones entre modelos (ejemplo hipotético)
-// Aquí debes definir las relaciones según la lógica de tu aplicación y el esquema de tu base de datos MongoDB
-
-// Ejemplo de relaciones hipotéticas entre modelos
-// models.Product.hasMany(models.Image);
-// models.Product.belongsTo(models.Category);
 
 // Exportar modelos y la conexión de mongoose
 module.exports = {

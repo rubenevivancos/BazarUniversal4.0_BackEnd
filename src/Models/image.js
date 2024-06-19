@@ -7,11 +7,7 @@ module.exports = (mongoose) => {
       type: String,
       required: true
     },
-    caption: {
-      type: String,
-      default: ''
-    },
-    product: {
+    product_id: {
       type: Schema.Types.ObjectId,
       ref: 'Product'
     }

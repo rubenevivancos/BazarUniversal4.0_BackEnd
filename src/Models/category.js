@@ -6,10 +6,6 @@ module.exports = (mongoose) => {
     name: {
       type: String,
       required: true
-    },
-    description: {
-      type: String,
-      default: ''
     }
   });
 

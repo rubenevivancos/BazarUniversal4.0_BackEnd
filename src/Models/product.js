@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 module.exports = (mongoose) => {
   const productSchema = new Schema({
-    name: {
+    title: {
       type: String,
       required: true
     },
@@ -15,14 +15,30 @@ module.exports = (mongoose) => {
       type: Number,
       required: true
     },
-    category: {
+    discountPercentage: {
+      type: Number,
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true
+    },
+    stock: {
+      type: Number,
+      required: true
+    },
+    brand: {
+      type: String,
+      required: true
+    },
+    thumbnail: {
+      type: String,
+      required: true
+    },
+    category_id: {
       type: Schema.Types.ObjectId,
       ref: 'Category'
-    },
-    images: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Image'
-    }]
+    }
   });
 
   return mongoose.model('Product', productSchema);
