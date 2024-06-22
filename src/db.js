@@ -13,7 +13,7 @@ const {
 } = process.env;
 
 // URL de conexión a MongoDB
-const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/?authSource=${MONGO_DB_NAME}`;
+const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
 
 // Opciones de configuración de conexión
 const mongooseOptions = {};
@@ -39,9 +39,6 @@ fs.readdirSync(path.join(__dirname, 'Models'))
     }
   });
 
-// Inyectar la conexión de mongoose a todos los modelos
-//modelDefiners.forEach(modelDefiner => modelDefiner(mongoose));
-
 // Capitalizar nombres de modelos (opcional)
 const capitalizedModels = modelDefiners.map(modelDefiner => {
   const modelName = modelDefiner.modelName.charAt(0).toUpperCase() + modelDefiner.modelName.slice(1);
@@ -51,10 +48,8 @@ const capitalizedModels = modelDefiners.map(modelDefiner => {
 // Crear objetos con los modelos capitalizados
 const models = Object.fromEntries(capitalizedModels);
 
-
 // Exportar modelos y la conexión de mongoose
 module.exports = {
-  ...models,
-  //mongooseConnection: mongoose.connection
-  mongooseConnection
+  ...models,  // para poder importar los modelos así: const { Product, Category } = require('./db.js');
+  mongooseConnection  // para importar la conexión así: const { mongooseConnection } = require('./db.js');
 };

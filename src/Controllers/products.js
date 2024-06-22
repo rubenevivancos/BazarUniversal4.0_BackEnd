@@ -1,55 +1,29 @@
-const { mongooseConnection } = require('../db.js'); // Importa la instancia de Mongoose
+const { Category } = require('../db.js');
 
 
 async function productSearch(req, res){
-    console.log("[ productSearch ] INICIO");
+    console.log("[ products.js.productSearch ] INICIO");
     let { search } = req.query;
-    console.log("[ productSearch ] search --> " + search);
+    console.log("[ products.js.productSearch ] search --> " + search);
 
     if (search) {
         search = search.toLowerCase();
-        console.log("[ productSearch ] El producto a buscar es: " + search);
+        console.log("[ products.js.productSearch ] El producto a buscar es: " + search);
 
         try{
-            //Obteniendo el listado de la busqueda usando la FUNCTION: "BazarUniversal"."getProductCategoryNames"
-            const result = await getListProducts(search);
-
-            
-            //Obteniendo la cantidad de productos por categoria del listado de la busqueda: INICIO
-            const categories = result.map((object) => object.category);
-            const uniqueCategories = new Set(categories);
-
-            uniqueCategories.forEach((category) => {
-                console.log("category --> " + category);
-            });
-
-            const categoriesWithCount = [];
-
-            uniqueCategories.forEach((category) => {
-                const objectsByCategory = result.filter((object) => object.category === category);
-                categoriesWithCount.push({ category: category, count: objectsByCategory.length });
-            });
-            //Obteniendo la cantidad de productos por categoria del listado de la busqueda:FIN
-
-            for(let i=0; i<categoriesWithCount.length; i++){
-                console.log("category -->" + categoriesWithCount[i].category);
-                console.log("count -->" + categoriesWithCount[i].count);
-            }
-            
-            //const categoriesWithCount = [];
-            let resul = {listProducts: result, categoriesWithCount: categoriesWithCount};
+            //Obteniendo el listado de la busqueda
+            const result = await Category.find();
+            console.log("result --> " + result);
 
             if(result.length){
-                console.log("[ productSearch ] Se encontraron " + result.length + " resultados");
-                console.log("[ productSearch ] product title: " + result[0].title);
-                console.log("[ productSearch ] category name: " + result[0].category);
-                return res.status(200).json(resul);
+                console.log("[ products.js.productSearch ] Se encontraron " + result.length + " resultados");
+                return res.status(200).json(result);
             }
-            console.log("[ productSearch ] No hay resultados");
+            console.log("[ products.js.productSearch ] No hay resultados");
             return res.status(422).json({message: "No hay resultados"}); 
 
         } catch (error) {
-            console.log("[ productSearch ] Ocurrio una excepcion: " + error.message);
+            console.log("[ products.js.productSearch ] Ocurrio una excepcion: " + error.message);
             return res.status(404).send(error.message);
         }
 
