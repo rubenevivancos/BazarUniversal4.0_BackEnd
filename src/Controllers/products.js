@@ -1,4 +1,4 @@
-const { conn } = require('../db.js'); // Importa tu instancia de Sequelize
+const { mongooseConnection } = require('../db.js'); // Importa la instancia de Mongoose
 
 
 async function productSearch(req, res){
@@ -131,43 +131,13 @@ async function getDetail(req, res){
     return res.status(400).json({message: "Falta enviar datos obligatorios"});
 }
 
-
-
 async function getListProducts(search) {
-    console.log("[ products.js/getListProducts ] INICIO");
+    console.log("[ products.js.getListProducts ] INICIO");
     try {
-        let functionName = "BazarUniversal.getProductCategoryNames";
-        console.log("[ products.js/getListProducts ] Se procede a llamar a la funcion: " + functionName);
-        const listProducts = await conn.query('SELECT * FROM "BazarUniversal"."getProductCategoryNames"(:search)', {
-            replacements: { search: search },
-            type: conn.QueryTypes.SELECT
-        });
 
-
-        const listID = listProducts.map((product) => product.p_id);
-
-        functionName = "BazarUniversal.getImagesByProduct";
-        console.log("[ products.js/getListProducts ] Se procede a llamar a la funcion: " + functionName);
-        const listImagesByProduct = await conn.query('SELECT * FROM "BazarUniversal"."getImagesByProduct"(ARRAY[:productIds])', {
-            replacements: { productIds: listID },
-            type: conn.QueryTypes.SELECT
-        });
-
-        //Se setea a cada producto su correspondiente arreglo de imagenes
-        for (let product of listProducts) {
-            // Filtra las imágenes correspondientes al producto actual
-            const productImages = listImagesByProduct.filter(image => image.product_id === product.p_id);
-
-            const listUrl = productImages.map((images) => images.url);
-
-            // Agrega el atributo "images" al objeto product con el arreglo de imágenes correspondientes
-            product.images = listUrl;
-        }
-        
-        console.log("[ products.js/getListProducts ] FIN");
-        return listProducts;
+        return "";
     } catch (error) {
-        console.error("[ products.js/getListProducts ] Error al llamar a la funcion: " + functionName, error);
+        console.error("[ products.js.getListProducts ] Error: ", error);
         throw error;
     }
 }

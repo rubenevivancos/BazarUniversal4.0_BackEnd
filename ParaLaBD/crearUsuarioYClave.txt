@@ -1,0 +1,11 @@
+Instalar Mongo DB Shell
+
+
+
+db.createUser({
+  user: "mongoUser",
+  pwd: "12345",
+  roles: [
+    { role: "readWrite", db: "BazarUniversal" }
+  ]
+});

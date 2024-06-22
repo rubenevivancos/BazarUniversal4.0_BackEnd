@@ -13,18 +13,13 @@ const {
 } = process.env;
 
 // URL de conexión a MongoDB
-const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
+const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/?authSource=${MONGO_DB_NAME}`;
 
 // Opciones de configuración de conexión
-const mongooseOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true
-};
+const mongooseOptions = {};
 
 // Conexión a MongoDB
-mongoose.connect(mongoUrl, mongooseOptions)
+const mongooseConnection = mongoose.connect(mongoUrl, mongooseOptions)
   .then(() => console.log('Conexión exitosa a MongoDB'))
   .catch(err => console.error('Error al conectar a MongoDB:', err));
 
@@ -35,17 +30,22 @@ const modelDefiners = [];
 fs.readdirSync(path.join(__dirname, 'Models'))
   .filter(file => file.endsWith('.js'))
   .forEach(file => {
-    const modelDefiner = require(path.join(__dirname, 'Models', file));
-    modelDefiners.push(modelDefiner);
+    try {
+      const modelDefiner = require(path.join(__dirname, 'Models', file));
+      // Inyectar la conexión de mongoose a cada modelo
+      modelDefiners.push(modelDefiner(mongoose));
+    } catch (err) {
+      console.error(`Error al cargar el archivo ${file}:`, err);
+    }
   });
 
 // Inyectar la conexión de mongoose a todos los modelos
-modelDefiners.forEach(modelDefiner => modelDefiner(mongoose));
+//modelDefiners.forEach(modelDefiner => modelDefiner(mongoose));
 
 // Capitalizar nombres de modelos (opcional)
 const capitalizedModels = modelDefiners.map(modelDefiner => {
   const modelName = modelDefiner.modelName.charAt(0).toUpperCase() + modelDefiner.modelName.slice(1);
-  return [modelName, mongoose.model(modelDefiner.modelName)];
+  return [modelName, modelDefiner];
 });
 
 // Crear objetos con los modelos capitalizados
@@ -55,5 +55,6 @@ const models = Object.fromEntries(capitalizedModels);
 // Exportar modelos y la conexión de mongoose
 module.exports = {
   ...models,
-  mongooseConnection: mongoose.connection
+  //mongooseConnection: mongoose.connection
+  mongooseConnection
 };
