@@ -1,7 +1,7 @@
-Instalar Mongo DB Shell
-
-
-
+1) Crear base de datos en Compass: BazarUniversal.
+2) Crear colecciones y llenarlas con los archivos json.
+3) Instalar Mongo DB Shell
+4) Iniciar mongosh, apretar enter, poner: use BazarUniversal, enter y luego poner esto:
 db.createUser({
   user: "mongoUser",
   pwd: "12345",
@@ -9,3 +9,4 @@ db.createUser({
     { role: "readWrite", db: "BazarUniversal" }
   ]
 });
+5) Al final poner: exit y enter.
