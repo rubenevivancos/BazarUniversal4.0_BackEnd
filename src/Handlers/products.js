@@ -8,7 +8,6 @@ async function productSearch(req, res){
     console.log("[ Handlers_products.js_productSearch ] search --> " + search);
 
     if (search) {
-        search = search.toLowerCase();
         console.log("[ Handlers_products.js_productSearch ] El producto a buscar es: " + search);
 
         try{

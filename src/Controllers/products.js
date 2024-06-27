@@ -4,10 +4,10 @@ const { Product } = require('../db.js');
 async function productSearchResult(search){
     console.log("[ Controllers_products.js_productSearchResult ] INICIO");
 
-    try{
-        //Obteniendo el listado de la busqueda
-        const searchRegex = new RegExp(search, 'i');
+    const searchRegex = new RegExp(search, 'i');
 
+    try {
+        //Obteniendo el listado de la busqueda
         const products = await Product.aggregate([
             {
                 $lookup: {
@@ -22,12 +22,10 @@ async function productSearchResult(search){
             },
             {
                 $match: {
-                    $expr: {
-                        $or: [
-                            { $regexMatch: { input: { $toLower: '$title' }, regex: search.toLowerCase() } },
-                            { $regexMatch: { input: { $toLower: '$category_info.name' }, regex: search.toLowerCase() } }
-                        ]
-                    }
+                    $or: [
+                        { title: { $regex: searchRegex } },
+                        { 'category_info.name': { $regex: searchRegex } }
+                    ]
                 }
             },
             {
@@ -51,6 +49,7 @@ async function productSearchResult(search){
 
         if(products.length){
             console.log("[ Controllers_products.js_productSearchResult ] Se encontraron " + products.length + " resultados");
+            console.log(products[0].category);
             return products;
         }
         console.log("[ Controllers_products.js_productSearchResult ] No hay resultados");
