@@ -9,4 +9,5 @@ db.createUser({
     { role: "readWrite", db: "BazarUniversal" }
   ]
 });
-5) Al final poner: exit y enter.
+5) Verificar su creacion con: db.getusers();
+6) Al final poner: exit y enter.

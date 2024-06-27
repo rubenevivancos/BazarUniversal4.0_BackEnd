@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 
 module.exports = (mongoose) => {
   const categorySchema = new Schema({
+    _id: Number,
     name: {
-      type: String
+      type: String, required: true
     }
   },{
     collection: 'Category'  // Aquí se especifica que el nombre en la BD Mongo sera exactamente Category

@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 module.exports = (mongoose) => {
   const productSchema = new Schema({
+    _id: Number,
     title: {
       type: String
     },
@@ -29,7 +30,7 @@ module.exports = (mongoose) => {
       type: String
     },
     category_id: {
-      type: Schema.Types.ObjectId,
+      type: Number,
       ref: 'Category'
     }
   },{

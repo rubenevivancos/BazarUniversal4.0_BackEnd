@@ -10,7 +10,7 @@ module.exports = (mongoose) => {
       required: true
     },
     product_id: {
-      type: Schema.Types.ObjectId,
+      type: Number,
       ref: 'Product'
     }
   },{
