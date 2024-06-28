@@ -1,8 +1,47 @@
-const { Product } = require('../db.js');
+const { Product, Image } = require('../db.js');
 
 
 async function productSearchResult(search){
     console.log("[ Controllers_products.js_productSearchResult ] INICIO");
+
+    try {
+        //Obteniendo el listado de la busqueda
+        const products = await getListProducts(search);
+
+        if(products.length){
+            console.log("[ Controllers_products.js_productSearchResult ] Se encontraron " + products.length + " resultados");
+
+            //Se obtiene un arreglo solo con los ids de los productos
+            const productIds = products.map((product) => product.p_id);
+
+            //Se obtienen todas las imagenes de los productos
+            const listImages = await Image.find({ product_id: { $in: productIds } });
+
+            //Se setea a cada producto su correspondiente arreglo de imagenes
+            for (let product of products) {
+                // Filtra las imágenes correspondientes al producto actual
+                const productImages = listImages.filter(image => image.product_id === product.p_id);
+
+                const listUrl = productImages.map((images) => images.url);
+
+                // Agrega el atributo "images" al objeto product con el arreglo de imágenes correspondientes
+                product.images = listUrl;
+            }
+            
+            return products;
+        }
+        console.log("[ Controllers_products.js_productSearchResult ] No hay resultados");
+        return []; 
+
+    } catch (error) {
+        console.log("[ Controllers_products.js_productSearchResult ] Ocurrio una excepcion: " + error.message);
+        return null;
+    }
+
+}
+
+async function getListProducts(search){
+    console.log("[ Controllers_products.js_getListProducts ] INICIO");
 
     const searchRegex = new RegExp(search, 'i');
 
@@ -46,17 +85,10 @@ async function productSearchResult(search){
             }
         ]);
 
-
-        if(products.length){
-            console.log("[ Controllers_products.js_productSearchResult ] Se encontraron " + products.length + " resultados");
-            console.log(products[0].category);
-            return products;
-        }
-        console.log("[ Controllers_products.js_productSearchResult ] No hay resultados");
-        return []; 
+        return products;
 
     } catch (error) {
-        console.log("[ Controllers_products.js_productSearchResult ] Ocurrio una excepcion: " + error.message);
+        console.log("[ Controllers_products.js_getListProducts ] Ocurrio una excepcion: " + error.message);
         return null;
     }
 
