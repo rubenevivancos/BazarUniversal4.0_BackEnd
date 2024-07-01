@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { productSearch } = require("../Handlers/products");
+const { productSearch, getDetail } = require("../Handlers/products");
 
 
 const router = Router();
@@ -7,7 +7,7 @@ const router = Router();
 
 
 router.get('/productSearch', productSearch);
-//router.get("/:idProduct", getDetail);
+router.get("/:productId", getDetail);
 
 
 module.exports = router;

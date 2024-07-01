@@ -40,6 +40,34 @@ async function productSearchResult(search){
 
 }
 
+
+async function getProductDetail(productId){
+    console.log("[ Controllers_products.js_getProductDetail ] INICIO");
+
+    try {
+        const product = await Product.findById(productId);
+        console.log("[ Controllers_products.js_getProductDetail ] FIN");
+        return product;
+    } catch (error) {
+        console.error("[ Handlers_products.js_getProductDetail ] Error:", error);
+        return null;
+    }
+}
+
+
+async function getProductImages(productId){
+    console.log("[ Controllers_products.js_getProductImages ] INICIO");
+
+    try {
+        const images = await Image.find({ product_id: productId });
+        return images;
+    } catch (error) {
+        console.error("[ Handlers_products.js_getProductImages ] Error:", error);
+        return [];
+    }    
+}
+
+
 async function getListProducts(search){
     console.log("[ Controllers_products.js_getListProducts ] INICIO");
 
@@ -96,5 +124,7 @@ async function getListProducts(search){
 
 
 module.exports = {
-    productSearchResult
+    productSearchResult,
+    getProductDetail,
+    getProductImages
 };
