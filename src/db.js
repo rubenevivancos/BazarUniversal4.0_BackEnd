@@ -8,12 +8,14 @@ const {
   MONGO_USER,
   MONGO_PASSWORD,
   MONGO_HOST,
-  MONGO_PORT,
   MONGO_DB_NAME
 } = process.env;
 
-// URL de conexión a MongoDB
-const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
+// URL de conexión a MongoDB en Desarrollo
+//const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}`;
+
+// URL de conexión a MongoDB en Atlas
+const mongoUrl = `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_DB_NAME}`;
 
 // Opciones de configuración de conexión
 const mongooseOptions = {};
